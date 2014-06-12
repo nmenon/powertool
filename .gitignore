@@ -1,3 +1,9 @@
+# Editor temp files
+.*.swp
+
+# Dependency files
+*.d
+
 # Object files
 *.o
 *.ko
@@ -21,3 +27,8 @@
 *.i*86
 *.x86_64
 *.hex
+powertool
+
+# Search DBs
+tags
+cscope.out
