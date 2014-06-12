@@ -44,8 +44,15 @@ CROSS_STRIP = ${CROSS_COMPILE}strip
 # Flags for LD
 CROSS_LFLAGS += --gc-sections --static -lm
 
-#Includes for our compiler
-CROSS_CFLAGS +=-Os -ffunction-sections -fdata-sections -Wall -pedantic -c -g
+# Includes for our compiler
+CROSS_CFLAGS += -I ./src -I ./include -I ./lib
+
+# Generic compiler stuff
+CROSS_CFLAGS +=-Os -ffunction-sections -fdata-sections -Wall -c -g
+
+# libcfg
+CROSS_CFLAGS += -I ./lib/lcfg/
+CROSS_ALL_SOURCES = ./lib/lcfg/lcfg_static.c
 
 # I want to save the path to libgcc, libc.a and libm.a for linking.
 # I can get them from the gcc frontend, using some options.
@@ -57,7 +64,7 @@ CROSS_LIBM_PATH=${shell ${CROSS_CC} ${CROSS_CFLAGS} -print-file-name=libm.a}
 #==============================================================================
 # Rules to make the target
 #==============================================================================
-CROSS_ALL_SOURCES = ${PROJECT_SRC}
+CROSS_ALL_SOURCES += ${PROJECT_SRC}
 CROSS_OBJS = $(CROSS_ALL_SOURCES:.c=.o)
 CROSS_DEP += $(CROSS_ALL_SOURCES:.c=.d)
 
