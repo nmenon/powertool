@@ -54,6 +54,10 @@ CROSS_CFLAGS +=-Os -ffunction-sections -fdata-sections -Wall -c -g
 CROSS_CFLAGS += -I ./lib/lcfg/
 CROSS_ALL_SOURCES = ./lib/lcfg/lcfg_static.c
 
+# lib-i2c
+CROSS_CFLAGS += -I ./lib/i2c-tools/include -I ./lib/i2c-tools/tools/
+CROSS_ALL_SOURCES = ./lib/i2c-tools/tools/i2cbusses.c
+
 # I want to save the path to libgcc, libc.a and libm.a for linking.
 # I can get them from the gcc frontend, using some options.
 # See gcc documentation
