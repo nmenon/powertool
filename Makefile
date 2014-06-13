@@ -42,10 +42,17 @@ CROSS_CC = ${CROSS_COMPILE}gcc
 # Program name definition for ARM GNU Linker.
 CROSS_LD = ${CROSS_COMPILE}gcc
 # Program name definition for ARM GNU Strip
-CROSS_STRIP = ${CROSS_COMPILE}strip
+ifeq (${ARCH}, "arm")
+  CROSS_STRIP = ${CROSS_COMPILE}strip
+else
+  CROSS_STRIP = /bin/true
+endif
 
 # Flags for LD
-CROSS_LFLAGS += --gc-sections --static -lm
+CROSS_LFLAGS += -lm
+ifeq (${ARCH}, "arm")
+  CROSS_LFLAGS += --gc-sections --static
+endif
 
 # Includes for our compiler
 CROSS_CFLAGS += -I ./src -I ./include -I ./lib
