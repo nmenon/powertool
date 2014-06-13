@@ -33,7 +33,7 @@ enum bool_type {
 
 /* From Linux kernel Kernel tag: v3.15 */
 #define BIT(nr)                 (1UL << (nr))
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 /**
  * __ffs - find first bit in word.
