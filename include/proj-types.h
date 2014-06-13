@@ -74,4 +74,7 @@ static __always_inline unsigned long __ffs(unsigned long word)
 
 #define __maybe_unused                     __attribute__((unused))
 
+/* From u-boot */
+#define __weak                             __attribute__((weak))
+
 #endif	/* __PROJTYPES__ */
