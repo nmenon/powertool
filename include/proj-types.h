@@ -18,6 +18,10 @@
 #define __PROJTYPES__
 
 #include <ctype.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <time.h>
 
 typedef unsigned char u8;
 typedef unsigned short u16;
@@ -28,6 +32,33 @@ enum bool_type {
 	false = 0,
 	true = 1,
 };
+
+#define ACCURATE_msleep
+
+static inline int msleep(int ms)
+{
+#ifdef PORTABLE_msleep
+	fd_set d;
+	struct timeval w;
+
+	FD_ZERO(&d);
+	w.tv_sec = ms / 1000;
+	w.tv_usec = (ms % 1000) * 1000;
+
+	return select(0, &d, NULL, NULL, &w);
+#endif
+
+#ifdef SILLY_msleep
+	return usleep(ms * 1000);
+#endif
+
+#ifdef ACCURATE_msleep
+	struct timespec t, r;
+	t.tv_sec = ms / 1000;
+	t.tv_nsec = (ms % 1000) * 1000 * 1000;
+	return nanosleep(&t, &r);
+#endif
+}
 
 #define SAFE_SET(val, mask) (((val) << __ffs(mask)) & (mask))
 
