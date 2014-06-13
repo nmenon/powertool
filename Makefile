@@ -103,6 +103,7 @@ ${PROJECT_NAME}: $(CROSS_OBJS) ${CROSS_VER_OBJ}
 	$(Q)$(CROSS_LD) $(CROSS_LFLAGS)\
 	  -o ${PROJECT_NAME} $(CROSS_OBJS) $(CROSS_VER_OBJ)
 	$(Q)$(CROSS_STRIP) ${PROJECT_NAME}
+	@echo Done. Binary '"'${PROJECT_NAME}'"' is ready.
 
 ${VERSION_GEN_FILE}: $(CROSS_OBJS)
 	$(Q)echo '#include <version.h>' >${VERSION_GEN_FILE} &&\
