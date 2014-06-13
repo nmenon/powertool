@@ -1,0 +1,13 @@
+PROJECT_SRC=				\
+	src/powertool/main.c		\
+	src/powertool/parse_config.c	\
+	src/powertool/pm_bus.c		\
+	src/powertool/ina226-sandbox.c	\
+	src/powertool/capture.c		\
+	src/powertool/algo.c		\
+
+ifeq ($(ARCH),arm)
+ PROJECT_SRC += src/powertool/ina226.c
+endif
+
+PROJECT_NAME= ptool
