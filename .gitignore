@@ -32,3 +32,6 @@ powertool
 # Search DBs
 tags
 cscope.out
+
+# Generated files
+src/version_gen.c

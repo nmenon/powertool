@@ -19,6 +19,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307 USA
 
+VERSION_MAJOR=0
+VERSION_MINOR=1
+
 # Handle verbose
 ifeq ("$(origin V)", "command line")
   VERBOSE = $(V)
@@ -52,11 +55,17 @@ CROSS_CFLAGS +=-Os -ffunction-sections -fdata-sections -Wall -c -g
 
 # libcfg
 CROSS_CFLAGS += -I ./lib/lcfg/
-CROSS_ALL_SOURCES = ./lib/lcfg/lcfg_static.c
+CROSS_ALL_SOURCES += ./lib/lcfg/lcfg_static.c
 
 # lib-i2c
 CROSS_CFLAGS += -I ./lib/i2c-tools/include -I ./lib/i2c-tools/tools/
-CROSS_ALL_SOURCES = ./lib/i2c-tools/tools/i2cbusses.c
+CROSS_ALL_SOURCES += ./lib/i2c-tools/tools/i2cbusses.c
+LIB_I2C_REV_FILE = ./lib/i2c-tools/version.h
+
+# Generated version file:
+CROSS_ALL_SOURCES += ./src/version.c
+VERSION_GEN_FILE = ./src/version_gen.c
+CROSS_VER_OBJ = $(VERSION_GEN_FILE:.c=.o)
 
 # I want to save the path to libgcc, libc.a and libm.a for linking.
 # I can get them from the gcc frontend, using some options.
@@ -71,17 +80,28 @@ CROSS_LIBM_PATH=${shell ${CROSS_CC} ${CROSS_CFLAGS} -print-file-name=libm.a}
 CROSS_ALL_SOURCES += ${PROJECT_SRC}
 CROSS_OBJS = $(CROSS_ALL_SOURCES:.c=.o)
 CROSS_DEP += $(CROSS_ALL_SOURCES:.c=.d)
+CROSS_REV_DEP += $(VERSION_GEN_FILE:.c=.d)
 
 .PHONY:	tags cscope
 
 #make all rule
-all: $(CROSS_OBJS) ${PROJECT_NAME} ${PROJECT_NAME}
+all: ${PROJECT_NAME}
 
-${PROJECT_NAME}: $(CROSS_OBJS)
+${PROJECT_NAME}: $(CROSS_OBJS) ${CROSS_VER_OBJ}
 	@echo Linking...
 	$(Q)$(CROSS_LD) $(CROSS_LFLAGS)\
-		-o ${PROJECT_NAME} $(CROSS_OBJS)
+	  -o ${PROJECT_NAME} $(CROSS_OBJS) $(CROSS_VER_OBJ)
 	$(Q)$(CROSS_STRIP) ${PROJECT_NAME}
+
+${VERSION_GEN_FILE}: $(CROSS_OBJS)
+	$(Q)echo '#include <version.h>' >${VERSION_GEN_FILE} &&\
+		echo 'char *powertool_version = "'`git describe --dirty\
+			2>/dev/null ||\
+		echo "$(VERSION_MAJOR).$(VERSION_MINOR)-nogit"`'";' >>\
+		${VERSION_GEN_FILE} &&\
+	   cat ${LIB_I2C_REV_FILE}>> ${VERSION_GEN_FILE} &&\
+	   echo 'char *lib_i2c_revision = VERSION;'>>${VERSION_GEN_FILE} &&\
+	   echo 'char *powertool_builddate = "'`date`'";' >>${VERSION_GEN_FILE}
 
 # pull in dependency info for *existing* .o files
 -include ${CROSS_DEP}
@@ -89,11 +109,11 @@ ${PROJECT_NAME}: $(CROSS_OBJS)
 %.o: %.c
 	@echo Compiling $< ...
 	$(Q)$(CROSS_CC) -c $(CROSS_CFLAGS) -MD ${<} -o ${@}
-
 # make clean rule
 clean:
 	$(Q)rm -f *.bin *.o *.d *.axf *.lst ${PROJECT_NAME} $(CROSS_OBJS)\
-		${CROSS_DEP} tags cscope.out
+		${CROSS_DEP} tags cscope.out ${VERSION_GEN_FILE}\
+		$(CROSS_VER_OBJ) $(CROSS_REV_DEP)
 
 # Tags stuff..
 tags: $(CROSS_ALL_SOURCES)
