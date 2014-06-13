@@ -1,0 +1,20 @@
+Generic Wish list
+--------------
+1. Organize such that powertool is not the only utility that we can create
+	- partially done
+2. make file.d dependency files become .file.d files.
+
+powertool wishlist
+-----------------
+1. make it a complete threaded model:
+	- each pm bus is a seperate process or thread of it's own (allows simultaneous capture)
+	- data collection and data computation per bus be split up into individual threads
+		- This should allow for better accuracy of data collection
+
+2. make ina driver not intrinsic to the program
+	- use fops and generic data structures so that we can use other ADCs as well
+	- Solve the configuration file problem (generic solution)
+
+3. Add additional algorithm analysis modules
+	- Simplistic averaging is not always a good idea, better might be to support
+	normalization of data set etc..
