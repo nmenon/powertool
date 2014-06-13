@@ -50,7 +50,7 @@ endif
 
 # Flags for LD
 CROSS_LFLAGS += -lm
-ifeq (${ARCH}, "arm")
+ifeq ($(ARCH),arm)
   CROSS_LFLAGS += --gc-sections --static
 endif
 
