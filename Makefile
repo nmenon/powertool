@@ -62,6 +62,10 @@ CROSS_CFLAGS += -I ./lib/i2c-tools/include -I ./lib/i2c-tools/tools/
 CROSS_ALL_SOURCES += ./lib/i2c-tools/tools/i2cbusses.c
 LIB_I2C_REV_FILE = ./lib/i2c-tools/version.h
 
+# omapconf
+CROSS_CFLAGS += -I ./lib/omapconf/common
+CROSS_ALL_SOURCES += ./lib/omapconf/common/autoadjust_table.c
+
 # Generated version file:
 CROSS_ALL_SOURCES += ./src/version.c
 VERSION_GEN_FILE = ./src/version_gen.c
