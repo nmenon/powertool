@@ -64,14 +64,10 @@ static int usage(char *app_name)
 		"\t[-n | --num_samples | --n] num_samples : Number of Samples to capture (default 100)\n"
 		"\t[-r | --rail_capture | --r] rail_name : Adds to Rail to capture(max 20)\n"
 		"\t[-g | --group_capture | --g] group_name : Adds all rail in the group to capture(max 10)\n"
-		"\t[-a | --algo | --a] algo_name : data processing algo to use\n"
-		"\n"
-		"Algo options:\n"
-		"\t dump: just dumps the data in csv format to stdout\n"
-		"\t average: samples are averaged and final average results are shown(default)\n"
-		"\n"
-		"Example:\n"
-		"%s --config brd.cfg --s 100 --n  200 -r mpu -r gpu -g ddr\n\n"
+		"\t[-a | --algo | --a] algo_name : data processing algo to use\n");
+	print_algo_list();
+	fprintf(stderr, "\nExample:\n"
+		"%s --config brd.config --s 100 --n  200 -r mpu -r gpu -g ddr\n"
 		"\tUses:\n"
 		"\t\tbrd.cfg as configuration file\n"
 		"\t\tmpu and gpu are added to the capture list(must be defined in brd.cfg)\n"
@@ -81,7 +77,8 @@ static int usage(char *app_name)
 		"\t\t Final average of all 200 samples are presented per rail\n"
 		"\n----\n"
 		"Example: list all rails\n"
-		"Example: %s --config brd.cfg -d\n", app_name, app_name);
+		"%s --config brd.config -d\n", app_name, app_name);
+
 	return -EINVAL;
 }
 

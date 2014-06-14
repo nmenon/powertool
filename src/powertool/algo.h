@@ -18,5 +18,6 @@
 
 int algo_check(char *algo);
 void algo_process_data(char *algo, int num_samples, int sampling_duration_ms);
+void print_algo_list(void);
 
 #endif	/* __PWR_ALGO__ */

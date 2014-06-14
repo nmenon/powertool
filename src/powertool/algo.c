@@ -27,6 +27,15 @@
 
 #define DELIMITER "-----8<-------\n"
 
+void print_algo_list(void)
+{
+	fprintf(stderr,
+		"\nalgo_name options:\n"
+		"\tdump: just dumps the data in csv format to stdout\n"
+		"\taverage: samples are averaged and final average results"
+		"are shown\n");
+}
+
 int algo_check(char *algo)
 {
 	if (!strcmp(algo, "dump") || !strcmp(algo, "average"))
