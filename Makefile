@@ -42,10 +42,10 @@ CROSS_CC = ${CROSS_COMPILE}gcc
 # Program name definition for ARM GNU Linker.
 CROSS_LD = ${CROSS_COMPILE}gcc
 # Program name definition for ARM GNU Strip
-ifeq (${ARCH}, "arm")
-  CROSS_STRIP = ${CROSS_COMPILE}strip
-else
+ifeq (${ARCH}, "sandbox")
   CROSS_STRIP = /bin/true
+else
+  CROSS_STRIP = ${CROSS_COMPILE}strip
 endif
 
 # Flags for LD
