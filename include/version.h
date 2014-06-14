@@ -18,6 +18,10 @@
 
 #include <stdio.h>
 
+extern char *powertool_version;
+extern char *lib_i2c_revision;
+extern char *powertool_builddate;
+
 void print_version(FILE *stream, char *application_name);
 
 #endif

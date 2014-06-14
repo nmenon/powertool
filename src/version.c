@@ -17,10 +17,6 @@
 #include <stdio.h>
 #include <version.h>
 
-extern char *powertool_version;
-extern char *powertool_builddate;
-extern char *lib_i2c_revision;
-
 void print_version(FILE *stream, char *application_name)
 {
 	fprintf(stream, "%s: Rev: %s, i2c_tools version: %s, Build Date: %s\n",
