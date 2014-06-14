@@ -202,8 +202,12 @@ int main(int argc, char *argv[])
 		/* First check if arguments are correct */
 		ret = parse_validate(voltage_rails_to_measure, idx_v_rail,
 				     groups_to_measure, idx_group);
-		if (ret)
+		if (ret) {
+			fprintf(stderr, "All valid values in config file %s:\n",
+				config_file);
+			parse_print_rails();
 			goto out;
+		}
 
 		/* Get rid of un-needed rails */
 		parse_cleanup(voltage_rails_to_measure, idx_v_rail,

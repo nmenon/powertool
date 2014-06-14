@@ -284,11 +284,6 @@ int parse_validate(char **rails_to_measure, int num_rails,
 	}
 
 out:
-	if (ret) {
-		fprintf(stderr,
-			"You may want to use '-d' option to list rails\n");
-	}
-
 	if (validated_rails)
 		free(validated_rails);
 	if (validated_groups)
