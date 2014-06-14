@@ -99,7 +99,7 @@ static void algo_average_data(struct pm_bus *bus, int num, int dur_ms)
 		strncpy(table[row][0], "Index", TABLE_MAX_ELT_LEN);
 		strncpy(table[row][1], "Rail Name", TABLE_MAX_ELT_LEN);
 		strncpy(table[row][2], "Shunt voltage(uV)", TABLE_MAX_ELT_LEN);
-		strncpy(table[row][3], "Rail voltage(uV)", TABLE_MAX_ELT_LEN);
+		strncpy(table[row][3], "Rail voltage(V)", TABLE_MAX_ELT_LEN);
 		strncpy(table[row][4], "Current(mA)", TABLE_MAX_ELT_LEN);
 		strncpy(table[row][5], "Power(mW)", TABLE_MAX_ELT_LEN);
 		row++;
@@ -128,8 +128,8 @@ static void algo_average_data(struct pm_bus *bus, int num, int dur_ms)
 				 rail->name);
 			snprintf(table[row][2], TABLE_MAX_ELT_LEN, "%3.2f",
 				 avg_sample.shunt_uV);
-			snprintf(table[row][3], TABLE_MAX_ELT_LEN, "%3.2f",
-				 avg_sample.rail_uV);
+			snprintf(table[row][3], TABLE_MAX_ELT_LEN, "%3.6f",
+				 avg_sample.rail_uV / 1000000);
 			snprintf(table[row][4], TABLE_MAX_ELT_LEN, "%3.2f",
 				 avg_sample.current_mA);
 			snprintf(table[row][5], TABLE_MAX_ELT_LEN, "%3.2f",
