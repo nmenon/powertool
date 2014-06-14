@@ -18,3 +18,5 @@ powertool wishlist
 3. Add additional algorithm analysis modules
 	- Simplistic averaging is not always a good idea, better might be to support
 	normalization of data set etc..
+
+4. Can we ask this to be rudimentary oscilloscope?
