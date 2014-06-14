@@ -48,7 +48,7 @@ static const struct option long_options[] = {
 	{"rail_capture", required_argument, NULL, PWR_RAIL},
 	{"group_capture", required_argument, NULL, PWR_GROUP},
 	{"algo", required_argument, NULL, PWR_ALGO},
-	{0,},
+	{NULL,},
 };
 
 #define OPTION_STRING	"dvc:s:n:r:g:a:"

@@ -24,6 +24,7 @@
 
 #include "ina226.h"
 #include "pm_bus.h"
+#include "algo.h"
 
 #define DELIMITER "-----8<-------\n"
 
