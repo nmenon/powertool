@@ -114,6 +114,21 @@ CROSS_REV_DEP += $(VERSION_GEN_FILE:.c=.d)
 #make all rule
 all: ${PROJECT_NAME}
 
+help:
+	@echo "Simple Usage: make"
+	@echo
+	@echo "Options:"
+	@echo "  help: this text"
+	@echo "  tags: generate tags file using ctags"
+	@echo "  cscope: generate cscope db file"
+	@echo "  clean: cleanup"
+	@echo
+	@echo "variables:"
+	@echo 'ARCH=sandbox - build a sandbox for test'
+	@echo 'CROSS_COMPILE=arm-linux-gnueabi - crosscompile build'
+	@echo 'C=1 - use sparse while building'
+	@echo 'V=1 - verbose build'
+
 ${PROJECT_NAME}: $(CROSS_OBJS) ${CROSS_VER_OBJ}
 	@echo Linking...
 	$(Q)$(CROSS_LD) $(CROSS_LFLAGS)\
