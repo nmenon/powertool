@@ -6,7 +6,7 @@ PROJECT_SRC=				\
 	src/powertool/capture.c		\
 	src/powertool/algo.c		\
 
-ifeq ($(ARCH),arm)
+ifneq ($(ARCH),sandbox)
  PROJECT_SRC += src/powertool/ina226.c
 endif
 

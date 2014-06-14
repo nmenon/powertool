@@ -50,7 +50,7 @@ endif
 
 # Flags for LD
 CROSS_LFLAGS += -lm
-ifeq ($(ARCH),arm)
+ifneq ($(ARCH),sandbox)
   CROSS_LFLAGS += --gc-sections --static
 endif
 
