@@ -192,7 +192,7 @@ static inline int find_match(char *val, char **list, int num_list)
 	int i;
 
 	for (i = 0; i < num_list; i++)
-		if (!strcmp(val, list[i]))
+		if (!strcasecmp(val, list[i]))
 			return 1;
 
 	return 0;
