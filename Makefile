@@ -31,6 +31,13 @@ ifndef VERBOSE
 endif
 Q := $(if $(VERBOSE:1=),@)
 
+ifeq ("$(origin C)", "command line")
+  RUNCHECK = $(C)
+endif
+ifndef RUNCHECK
+  RUNCHECK=0
+endif
+
 # Get project file details from Makefile.project
 include Makefile.project
 
@@ -85,6 +92,15 @@ CROSS_LIB_GCC_PATH=${shell ${CROSS_CC} ${CROSS_CFLAGS} -print-libgcc-file-name}
 CROSS_LIBC_PATH=${shell ${CROSS_CC} ${CROSS_CFLAGS} -print-file-name=libc.a}
 CROSS_LIBM_PATH=${shell ${CROSS_CC} ${CROSS_CFLAGS} -print-file-name=libm.a}
 
+ifndef CHECK
+  CHECK=sparse
+endif
+
+ifneq (${RUNCHECK},0)
+  cmd_checkpsrc = echo Checking $<
+  cmd_checksrc = ${CHECK} ${CROSS_CFLAGS} $<
+endif
+
 #==============================================================================
 # Rules to make the target
 #==============================================================================
@@ -119,8 +135,11 @@ ${VERSION_GEN_FILE}: $(CROSS_OBJS)
 -include ${CROSS_DEP}
 
 %.o: %.c
+	$(Q)$(cmd_checkpsrc)
+	$(Q)$(cmd_checksrc)
 	@echo Compiling $< ...
 	$(Q)$(CROSS_CC) -c $(CROSS_CFLAGS) -MD ${<} -o ${@}
+
 # make clean rule
 clean:
 	$(Q)rm -f *.bin *.o *.d *.axf *.lst ${PROJECT_NAME} $(CROSS_OBJS)\
