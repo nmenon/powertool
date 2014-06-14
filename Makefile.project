@@ -2,11 +2,14 @@ PROJECT_SRC=				\
 	src/powertool/main.c		\
 	src/powertool/parse_config.c	\
 	src/powertool/pm_bus.c		\
-	src/powertool/ina226-sandbox.c	\
 	src/powertool/capture.c		\
 	src/powertool/algo.c		\
 
-ifneq ($(ARCH),sandbox)
+# INA logic
+PROJECT_SRC += src/powertool/ina226-common.c
+ifeq ($(ARCH),sandbox)
+ PROJECT_SRC += src/powertool/ina226-sandbox.c
+else
  PROJECT_SRC += src/powertool/ina226.c
 endif
 
