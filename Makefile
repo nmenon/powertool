@@ -98,7 +98,7 @@ endif
 
 ifneq (${RUNCHECK},0)
   cmd_checkpsrc = echo Checking $<
-  cmd_checksrc = ${CHECK} ${CROSS_CFLAGS} $<
+  cmd_checksrc = ${CHECK} ${CROSS_CFLAGS} -DSPARSE_MODE $<
 endif
 
 #==============================================================================
