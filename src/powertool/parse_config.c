@@ -271,7 +271,6 @@ int parse_validate(char **rails_to_measure, int num_rails,
 					rails_to_measure[i]);
 		}
 		ret = -EINVAL;
-		goto out;
 	}
 
 	if (n_valid_groups < num_groups) {
@@ -282,7 +281,6 @@ int parse_validate(char **rails_to_measure, int num_rails,
 					groups_to_measure[i]);
 		}
 		ret = -EINVAL;
-		goto out;
 	}
 
 out:
