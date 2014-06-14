@@ -16,8 +16,6 @@
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
-#include <i2cbusses.h>
-#include <linux/i2c-dev.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -172,28 +170,24 @@ int main(int argc, char *argv[])
 	/* Generic parameter checks */
 	if (1 == strlen(config_file)) {
 		fprintf(stderr, "Error: need config file\n");
-		usage(argv[0]);
-		return -EINVAL;
+		return usage(argv[0]);
 	}
 
 	if (!display) {
 		if (!idx_v_rail && !idx_group) {
 			fprintf(stderr,
 				"Error: Need group of rails to measure\n");
-			usage(argv[0]);
-			return -EINVAL;
+			return usage(argv[0]);
 		}
 
 		if (!num_samples || !sampling_duration_ms) {
 			fprintf(stderr, "Error: 0 capture attempt?\n");
-			usage(argv[0]);
-			return -EINVAL;
+			return usage(argv[0]);
 		}
 
 		if (algo_check(algo)) {
 			fprintf(stderr, "Bad Algo %s used\n", algo);
-			usage(argv[0]);
-			return -EINVAL;
+			return usage(argv[0]);
 		}
 
 	}
@@ -202,8 +196,7 @@ int main(int argc, char *argv[])
 	if (ret) {
 		fprintf(stderr, "Parse of config file %s failed\n",
 			config_file);
-		usage(argv[0]);
-		return -EINVAL;
+		return usage(argv[0]);
 	}
 
 	if (display) {
