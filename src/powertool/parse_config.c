@@ -27,8 +27,9 @@
 #include "lcfg_static.h"
 #include "pm_bus.h"
 #include "ina226.h"
+#include "parse_config.h"
 
-char **split_pmbus_key(const char *key, int *num_keys)
+static char **split_pmbus_key(const char *key, int *num_keys)
 {
 	char **res = NULL;
 	char *p = strtok((char *)key, ".");
@@ -49,7 +50,7 @@ char **split_pmbus_key(const char *key, int *num_keys)
 	/* realloc one extra element for the last NULL */
 
 	res = realloc(res, sizeof(char *) * (n_keys + 1));
-	res[n_keys] = 0;
+	res[n_keys] = NULL;
 
 	*num_keys = n_keys;
 	return res;
@@ -164,7 +165,7 @@ void parse_print_rails(void)
 
 }
 
-int parse_file(char *fname)
+int parse_file(char *fname, int num_samples)
 {
 	struct lcfg *c = lcfg_new(fname);
 	enum lcfg_status stat;
@@ -180,7 +181,7 @@ int parse_file(char *fname)
 		return -EINVAL;
 	}
 
-	lcfg_accept(c, compare_eventhandler, 0);
+	lcfg_accept(c, compare_eventhandler, NULL);
 
 	lcfg_delete(c);
 	return 0;
