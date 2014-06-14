@@ -1,3 +1,24 @@
+See specific licenses for libraries:
+1)
+lib/lcfg/README for license of liblcfg - lightweight configuration file library
+Website: http://liblcfg.carnivore.it/
+This uses the static version of the code.
+the files lcfg_static.c lcfg_static.h were generated using mksinglefile.sh
+(GPLV2 or (at your option) any later version.
+2) lib/i2c-tools/COPYING
+GPLV2 license
+
+3) lib/omapconf/LICENSE
+libraries picked are under BSD License.
+
+4) include/proj-types.h contain various code from linux kernel
+See https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/COPYING
+for license information.
+
+Everything written otherwise should fall under GPLV2 license as below:
+
+----------------------------------------
 GNU GENERAL PUBLIC LICENSE
                        Version 2, June 1991
 
