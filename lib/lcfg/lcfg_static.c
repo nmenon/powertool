@@ -297,7 +297,7 @@ inline static void lcfg_string_grow(struct lcfg_string *s, unsigned int new_size
 	}
 }
 
-struct lcfg_string *lcfg_string_new()
+struct lcfg_string *lcfg_string_new(void)
 {
 	struct lcfg_string *s = malloc(sizeof(struct lcfg_string));
 	assert(s);
@@ -1380,10 +1380,14 @@ static void lcfgx_tree_insert(int pathc, char **pathv, void *data, size_t len, s
 	}
 }
 
-enum lcfg_status lcfgx_tree_visitor(const char *key, void *data, size_t len, void *user_data)
+static enum lcfg_status lcfgx_tree_visitor(const char *key, void *data, size_t len, void *user_data)
 {
 	struct lcfgx_tree_node *root = user_data;
+#ifdef SPARSE_MODE
+	char path[100];
+#else
 	char path[strlen(key) + 1];
+#endif
 	int path_components = 1;
 
 	strncpy(path, key, strlen(key) + 1);
@@ -1392,7 +1396,11 @@ enum lcfg_status lcfgx_tree_visitor(const char *key, void *data, size_t len, voi
 		if( *key++ == '.' )
 			path_components++;
 
+#ifdef SPARSE_MODE
+	char *pathv[100];
+#else
 	char *pathv[path_components];
+#endif
 	char *token;
 	//char *saveptr = NULL;
 	int pathc = 0;
