@@ -18,6 +18,9 @@
 
 int parse_file(char *fname, int num_samples);
 
+int parse_validate(char **rails_to_measure, int num_rails,
+		   char **groups_to_measure, int num_groups);
+
 void parse_cleanup(char **rails_to_measure, int num_rails,
 		   char **groups_to_measure, int num_groups);
 

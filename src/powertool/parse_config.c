@@ -198,6 +198,107 @@ static inline int find_match(char *val, char **list, int num_list)
 	return 0;
 }
 
+int parse_validate(char **rails_to_measure, int num_rails,
+		   char **groups_to_measure, int num_groups)
+{
+	struct pm_bus *bus = root_pm_bus;
+	struct ina226_rail *rail;
+	char **validated_rails = NULL;
+	char **validated_groups = NULL;
+	int n_valid_rails = 0, n_valid_groups = 0, ret = 0, i;
+
+	if (num_rails) {
+		validated_rails = calloc(sizeof(*validated_rails), num_rails);
+		if (!validated_rails) {
+			fprintf(stderr,
+				"Unable to allocate memory for rails\n");
+			ret = ENOMEM;
+			goto out;
+		}
+	}
+
+	if (num_groups) {
+		validated_groups = calloc(sizeof(*validated_groups),
+					  num_groups);
+		if (!validated_groups) {
+			fprintf(stderr,
+				"Unable to allocate memory for groups\n");
+			ret = ENOMEM;
+			goto out;
+		}
+	}
+
+	while (bus) {
+		rail = bus->rail;
+		while (rail) {
+			if (find_match(rail->name, rails_to_measure, num_rails)) {
+				if (!find_match(rail->name,
+						validated_rails,
+						n_valid_rails)) {
+					validated_rails[n_valid_rails] =
+					    rail->name;
+					n_valid_rails++;
+				} else {
+					fprintf(stderr,
+						"Bad arg %s duplicated\n",
+						rail->name);
+					ret = -EINVAL;
+					goto out;
+				}
+			}
+
+			if (find_match(rail->board_group_name,
+				       groups_to_measure, num_groups)) {
+				if (!find_match(rail->board_group_name,
+						validated_groups,
+						n_valid_groups)) {
+					validated_groups[n_valid_groups] =
+					    rail->board_group_name;
+					n_valid_groups++;
+				}
+			}
+			rail = rail->next;
+		}
+		bus = bus->next;
+	}
+
+	/* Verification */
+	if (n_valid_rails < num_rails) {
+		for (i = 0; i < num_rails; i++) {
+			if (!find_match(rails_to_measure[i],
+					validated_rails, n_valid_rails))
+				fprintf(stderr, "invalid rail %s\n",
+					rails_to_measure[i]);
+		}
+		ret = -EINVAL;
+		goto out;
+	}
+
+	if (n_valid_groups < num_groups) {
+		for (i = 0; i < num_groups; i++) {
+			if (!find_match(groups_to_measure[i],
+					validated_groups, n_valid_groups))
+				fprintf(stderr, "invalid group %s\n",
+					groups_to_measure[i]);
+		}
+		ret = -EINVAL;
+		goto out;
+	}
+
+out:
+	if (ret) {
+		fprintf(stderr,
+			"You may want to use '-d' option to list rails\n");
+	}
+
+	if (validated_rails)
+		free(validated_rails);
+	if (validated_groups)
+		free(validated_groups);
+
+	return ret;
+}
+
 void parse_cleanup(char **rails_to_measure, int num_rails,
 		   char **groups_to_measure, int num_groups)
 {

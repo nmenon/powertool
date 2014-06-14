@@ -199,6 +199,12 @@ int main(int argc, char *argv[])
 	if (display) {
 		parse_print_rails();
 	} else {
+		/* First check if arguments are correct */
+		ret = parse_validate(voltage_rails_to_measure, idx_v_rail,
+				     groups_to_measure, idx_group);
+		if (ret)
+			goto out;
+
 		/* Get rid of un-needed rails */
 		parse_cleanup(voltage_rails_to_measure, idx_v_rail,
 			      groups_to_measure, idx_group);
