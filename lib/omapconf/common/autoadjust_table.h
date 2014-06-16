@@ -55,7 +55,7 @@
 
 #define TABLE_MAX_ROW		500
 #define TABLE_MAX_COL		20
-#define TABLE_MAX_ELT_LEN	60
+#define TABLE_MAX_ELT_LEN	150
 
 #define TABLE_HAS_TITLE		1
 #define TABLE_HAS_SUBTITLE	2
