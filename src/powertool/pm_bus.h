@@ -19,7 +19,7 @@
 #include "ina226.h"
 
 #define MAX_PMBUS_NAME		20
-#define MAX_PMBUS_I2CNAME	3
+#define MAX_PMBUS_I2CNAME	30
 
 struct pm_bus {
 	struct pm_bus *next;
