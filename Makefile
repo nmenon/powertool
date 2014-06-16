@@ -73,7 +73,7 @@ CROSS_ALL_SOURCES += ./lib/lcfg/lcfg_static.c
 
 # lib-i2c
 CROSS_CFLAGS += -I ./lib/i2c-tools/include -I ./lib/i2c-tools/tools/
-CROSS_ALL_SOURCES += ./lib/i2c-tools/tools/i2cbusses.c
+CROSS_ALL_SOURCES += ./lib/i2c-tools/tools/i2cbusses.c lib/i2c-dev-wrapper.c
 LIB_I2C_REV_FILE = ./lib/i2c-tools/version.h
 
 # omapconf

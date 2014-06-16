@@ -18,12 +18,10 @@
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
-#include <i2cbusses.h>
-#include <linux/i2c-dev.h>
+#include <i2c-wrap.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ioctl.h>
 #include <unistd.h>
 #include <version.h>
 
@@ -35,18 +33,25 @@
 static int __maybe_unused _ina226_read(int i2c_fd, u8 reg, u16 * data)
 {
 	int res = 0;
-	res = i2c_smbus_read_word_data(i2c_fd, reg);
+	u32 d = 0;
+
+	res = i2c_read((void *)i2c_fd, I2C_REG_SIZE_8 | I2C_DATA_SIZE_16, reg,
+		       &d);
 	if (res < 0)
 		return res;
-	*data = (u16) res;
+	*data = (u16) d;
 	*data = FLIP_BYTES(*data);
 	return 0;
 }
 
 static int __maybe_unused _ina226_write(int i2c_fd, u8 reg, u16 data)
 {
-	data = FLIP_BYTES(data);
-	return i2c_smbus_write_word_data(i2c_fd, reg, data);
+	int res;
+	u32 d = FLIP_BYTES(data);
+
+	res = i2c_write((void *)i2c_fd, I2C_REG_SIZE_8 | I2C_DATA_SIZE_16, reg,
+			d);
+	return res;
 }
 
 static __maybe_unused int _ina226_rmw(int i2c_fd, u8 reg, u16 mask, u16 clr,
@@ -215,26 +220,21 @@ int ina226_process_one(struct ina226_rail *rail, struct power_data_sample *data)
 
 int ina226_bus_init_i2c(struct pm_bus *bus)
 {
-	char fname[20];
-	int fd;
-	int i2c_bus;
+	int ret;
+	void *fd;
 	struct ina226_rail *rail = bus->rail;
 
-	i2c_bus = lookup_i2c_bus(bus->i2c_bus);
-	if (i2c_bus < 0)
-		return i2c_bus;
+	ret = i2c_bus_init(bus->i2c_bus, &fd);
+	if (ret < 0)
+		return ret;
 
-	fd = open_i2c_dev(i2c_bus, fname, sizeof(fname), 0);
-	if (fd < 0)
-		return fd;
-
-	bus->i2c_fd = fd;
+	bus->i2c_fd = (int)fd;
 
 	if (!rail)
 		return 0;
 
 	while (rail) {
-		rail->i2c_fd = fd;
+		rail->i2c_fd = bus->i2c_fd;
 		rail = rail->next;
 	}
 
@@ -243,10 +243,10 @@ int ina226_bus_init_i2c(struct pm_bus *bus)
 
 void ina226_bus_deinit_i2c(struct pm_bus *bus)
 {
-	close(bus->i2c_fd);
+	i2c_bus_deinit((void *)bus->i2c_fd);
 }
 
 int ina226_bus_setup(struct ina226_rail *rail)
 {
-	return set_slave_addr(rail->i2c_fd, rail->i2c_slave_addr, 1);
+	return i2c_set_slave((void *)rail->i2c_fd, rail->i2c_slave_addr, 1);
 }
