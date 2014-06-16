@@ -30,12 +30,12 @@
 #include "ina226_reg_defns.h"
 #include "power_data.h"
 
-static int __maybe_unused _ina226_read(int i2c_fd, u8 reg, u16 * data)
+static int __maybe_unused _ina226_read(void *i2c_fd, u8 reg, u16 * data)
 {
 	int res = 0;
 	u32 d = 0;
 
-	res = i2c_read((void *)i2c_fd, I2C_REG_SIZE_8 | I2C_DATA_SIZE_16, reg,
+	res = i2c_read(i2c_fd, I2C_REG_SIZE_8 | I2C_DATA_SIZE_16, reg,
 		       &d);
 	if (res < 0)
 		return res;
@@ -44,17 +44,17 @@ static int __maybe_unused _ina226_read(int i2c_fd, u8 reg, u16 * data)
 	return 0;
 }
 
-static int __maybe_unused _ina226_write(int i2c_fd, u8 reg, u16 data)
+static int __maybe_unused _ina226_write(void *i2c_fd, u8 reg, u16 data)
 {
 	int res;
 	u32 d = FLIP_BYTES(data);
 
-	res = i2c_write((void *)i2c_fd, I2C_REG_SIZE_8 | I2C_DATA_SIZE_16, reg,
+	res = i2c_write(i2c_fd, I2C_REG_SIZE_8 | I2C_DATA_SIZE_16, reg,
 			d);
 	return res;
 }
 
-static __maybe_unused int _ina226_rmw(int i2c_fd, u8 reg, u16 mask, u16 clr,
+static __maybe_unused int _ina226_rmw(void *i2c_fd, u8 reg, u16 mask, u16 clr,
 				      u16 set)
 {
 	int r;
@@ -228,7 +228,7 @@ int ina226_bus_init_i2c(struct pm_bus *bus)
 	if (ret < 0)
 		return ret;
 
-	bus->i2c_fd = (int)fd;
+	bus->i2c_fd = fd;
 
 	if (!rail)
 		return 0;
@@ -243,10 +243,10 @@ int ina226_bus_init_i2c(struct pm_bus *bus)
 
 void ina226_bus_deinit_i2c(struct pm_bus *bus)
 {
-	i2c_bus_deinit((void *)bus->i2c_fd);
+	i2c_bus_deinit(bus->i2c_fd);
 }
 
 int ina226_bus_setup(struct ina226_rail *rail)
 {
-	return i2c_set_slave((void *)rail->i2c_fd, rail->i2c_slave_addr, 1);
+	return i2c_set_slave(rail->i2c_fd, rail->i2c_slave_addr, 1);
 }

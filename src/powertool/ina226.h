@@ -53,7 +53,7 @@ struct reg_ina226 {
 struct ina226_rail {
 	struct	ina226_rail *next;
 
-	int	i2c_fd;
+	void	*i2c_fd;
 
 	u8	i2c_slave_addr;
 

@@ -26,7 +26,7 @@ struct pm_bus {
 	char name[MAX_PMBUS_NAME];
 	char i2c_bus[MAX_PMBUS_I2CNAME];
 	struct ina226_rail *rail;
-	int i2c_fd;
+	void *i2c_fd;
 };
 
 extern struct pm_bus *root_pm_bus;
