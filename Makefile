@@ -49,7 +49,7 @@ CROSS_CC = ${CROSS_COMPILE}gcc
 # Program name definition for ARM GNU Linker.
 CROSS_LD = ${CROSS_COMPILE}gcc
 # Program name definition for ARM GNU Strip
-ifeq (${ARCH}, "sandbox")
+ifeq (${ARCH},sandbox)
   CROSS_STRIP = /bin/true
 else
   CROSS_STRIP = ${CROSS_COMPILE}strip
@@ -71,10 +71,15 @@ CROSS_CFLAGS +=-Os -ffunction-sections -fdata-sections -Wall -c -g
 CROSS_CFLAGS += -I ./lib/lcfg/
 CROSS_ALL_SOURCES += ./lib/lcfg/lcfg_static.c
 
-# lib-i2c
-CROSS_CFLAGS += -I ./lib/i2c-tools/include -I ./lib/i2c-tools/tools/
-CROSS_ALL_SOURCES += ./lib/i2c-tools/tools/i2cbusses.c lib/i2c-dev-wrapper.c
-LIB_I2C_REV_FILE = ./lib/i2c-tools/version.h
+ifneq (${ARCH},sandbox)
+ # lib-i2c
+ CROSS_CFLAGS += -I ./lib/i2c-tools/include -I ./lib/i2c-tools/tools/
+ CROSS_ALL_SOURCES += ./lib/i2c-tools/tools/i2cbusses.c lib/i2c-dev-wrapper.c
+ LIB_I2C_REV_FILE = ./lib/i2c-tools/version.h
+else
+ CROSS_ALL_SOURCES += ./lib/i2c-dev-sandbox.c
+ LIB_I2C_REV_FILE = ./lib/i2c-tools/version.h
+endif
 
 # omapconf
 CROSS_CFLAGS += -I ./lib/omapconf/common
