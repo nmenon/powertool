@@ -23,6 +23,11 @@ do additional processing that pre-packaged utilities dont let us.
 So, that was basically the history of what motivated this simple
 utility.
 
+NOTE: There are more than one way to skin a cat :). Solutions like
+http://www.totalphase.com/products/aardvark-i2cspi/ do exist in the market
+which may do this job as well and may even be incorporated in this tool
+similar to the support of FTDI MPSSE option added.
+
 What can powertool do?
 ---------------------
 * It can measure current and voltage and do averaging (if that is what you'd
