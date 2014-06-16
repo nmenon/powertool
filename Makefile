@@ -58,7 +58,9 @@ endif
 # Flags for LD
 CROSS_LFLAGS += -lm
 ifneq ($(ARCH),sandbox)
-  CROSS_LFLAGS += --gc-sections --static
+  ifneq ($(I2C),mpsse)
+    CROSS_LFLAGS += --gc-sections --static
+  endif
 endif
 
 # Includes for our compiler
@@ -72,10 +74,24 @@ CROSS_CFLAGS += -I ./lib/lcfg/
 CROSS_ALL_SOURCES += ./lib/lcfg/lcfg_static.c
 
 ifneq (${ARCH},sandbox)
- # lib-i2c
- CROSS_CFLAGS += -I ./lib/i2c-tools/include -I ./lib/i2c-tools/tools/
- CROSS_ALL_SOURCES += ./lib/i2c-tools/tools/i2cbusses.c lib/i2c-dev-wrapper.c
- LIB_I2C_REV_FILE = ./lib/i2c-tools/version.h
+  ifeq (${I2C},mpsse)
+   CROSS_CFLAGS += -I lib/libmpsse/src/
+
+   CROSS_ALL_SOURCES += lib/i2c-mpsse-wrapper.c
+   CROSS_ALL_SOURCES +=lib/libmpsse/src/fast.c
+   CROSS_ALL_SOURCES +=lib/libmpsse/src/mpsse.c
+   CROSS_ALL_SOURCES +=lib/libmpsse/src/support.c
+
+   LIB_I2C_REV_FILE = lib/libmpsse/version.h
+
+   CROSS_LFLAGS += -lftdi
+   CROSS_CFLAGS += -DLIBFTDI1=0
+  else
+   # lib-i2c
+   CROSS_CFLAGS += -I ./lib/i2c-tools/include -I ./lib/i2c-tools/tools/
+   CROSS_ALL_SOURCES += ./lib/i2c-tools/tools/i2cbusses.c lib/i2c-dev-wrapper.c
+   LIB_I2C_REV_FILE = ./lib/i2c-tools/version.h
+ endif
 else
  CROSS_ALL_SOURCES += ./lib/i2c-dev-sandbox.c
  LIB_I2C_REV_FILE = ./lib/i2c-tools/version.h
@@ -131,13 +147,14 @@ help:
 	@echo "variables:"
 	@echo 'ARCH=sandbox - build a sandbox for test'
 	@echo 'CROSS_COMPILE=arm-linux-gnueabi - crosscompile build'
+	@echo 'I2C=mpsse - use mpsse library instead of i2c-dev for I2C access'
 	@echo 'C=1 - use sparse while building'
 	@echo 'V=1 - verbose build'
 
 ${PROJECT_NAME}: $(CROSS_OBJS) ${CROSS_VER_OBJ}
 	@echo Linking...
-	$(Q)$(CROSS_LD) $(CROSS_LFLAGS)\
-	  -o ${PROJECT_NAME} $(CROSS_OBJS) $(CROSS_VER_OBJ)
+	$(Q)$(CROSS_LD)\
+	  -o ${PROJECT_NAME} $(CROSS_OBJS) $(CROSS_VER_OBJ)  $(CROSS_LFLAGS)
 	$(Q)$(CROSS_STRIP) ${PROJECT_NAME}
 	@echo Done. Binary '"'${PROJECT_NAME}'"' is ready.
 

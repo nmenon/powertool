@@ -38,12 +38,13 @@ What can powertool do?
 
 How does powertool work?
 ---------------------
+Option 1: use a development board (example beaglebone black)
 ```
                                  (*)ptool runs here
 
                                  BeagleBone Black(*)
   o      +-------+    uart     +------------------+
-  +      |       |    cable    |                  |
+ -+-     |       |    cable    |                  |
   |  +>  |       +---------->  +------------------+
   +      |       |             +------------------+ P9 expansion connector
 /  \     +-------+                  |     |
@@ -75,8 +76,48 @@ How does powertool work?
                          +-------------------------------------+
                                   Board under measurement
 ```
+Option 2: use an FT2232H Mini Module[1]
+ http://www.ftdichip.com/Support/Documents/DataSheets/Modules/DS_FT2232H_Mini_Module.pdf
 
-ptool is a utility that you run on beaglebone black and use it
+```
+         (*)ptool runs here
+
+                                 FT2232H Mini Module
+  o      +-------+    USB      +------------------+
+  +      |       |    cable    |                  |
+ /|\ +>  |       +---------->  +------------------+
+  +      |       |             +------------------+ CN2/CN3 connector
+/  \     +-------+                  |     |
+             PC                     | I2C |
+ You      Terminal(*)        +-+----+     |
+ :)                          | |----------+
+                         +----------------+--------------------+
+                         |   | |                               |
+                         |   | |           +-------------+     |
+                         |   | |           |             |     |
+                         |   | |           |  Sink for   |     |
+                         |   | |           |  Supply     |     |
+                         |   | |           +------+------+     |
+                         |   | |                  |            |
+                         |   v v     +----------> |  -         |
+                         |           |            |            |
+                         | +---------+      +-----+-----+      |
+                         | | INA226  |      |  Shunt    |      |
+                         | |         |      |  Resistor |      |
+                         | +---------+      +-----+-----+      |
+                         |           |            |            |
+                         |           +----------> |  +         |
+                         |                        |            |
+                         |                +-------+------+     |
+                         |                |  Source of   |     |
+                         |                |  Supply      |     |
+                         |                +--------------+     |
+                         |                                     |
+                         +-------------------------------------+
+                                  Board under measurement
+```
+
+ptool is a utility that you run on beaglebone black / PC and use it
 to measure the current and voltage on another platform. It uses i2c-dev to
 talk to the INA226 ADC, collect current and voltage values and finally
 displays it to user.
@@ -110,6 +151,11 @@ etc.. basically sandbox is pretty much powertool except it generates
 random data instead of actual measurement
 
 	make ARCH=sandbox
+
+4. Building with mpsse (FTDI bitbang example) - requires libftdi and libftdi-dev
+installed:
+
+	make I2C=mpsse
 
 At the end of the build, you get 'ptool'
 
