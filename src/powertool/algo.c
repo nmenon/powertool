@@ -86,10 +86,13 @@ static void algo_average_data(struct pm_bus *bus, int num, int dur_ms)
 	struct ina226_rail *rail;
 	int i, ridx;
 	int row;
+	float current_summary_bus;
+	float current_summary_cumulative = 0;
 
 	fprintf(stdout, DELIMITER "Average Data Start\n" DELIMITER);
 	while (bus) {
 		rail = bus->rail;
+		current_summary_bus = 0;
 		autoadjust_table_init(table);
 		row = 0;
 		snprintf(table[row][0], TABLE_MAX_ELT_LEN,
@@ -136,14 +139,37 @@ static void algo_average_data(struct pm_bus *bus, int num, int dur_ms)
 				 avg_sample.power_mW);
 			row++;
 
+			current_summary_bus += avg_sample.power_mW;
 			rail = rail->next;
 			ridx++;
 		}
+
+		snprintf(table[row][0], TABLE_MAX_ELT_LEN, "---");
+		snprintf(table[row][1], TABLE_MAX_ELT_LEN, "---");
+		snprintf(table[row][2], TABLE_MAX_ELT_LEN, "---");
+		snprintf(table[row][3], TABLE_MAX_ELT_LEN, "---");
+		snprintf(table[row][4], TABLE_MAX_ELT_LEN, "---");
+		snprintf(table[row][5], TABLE_MAX_ELT_LEN, "---");
+		row++;
+		snprintf(table[row][0], TABLE_MAX_ELT_LEN, "Total");
+		snprintf(table[row][5], TABLE_MAX_ELT_LEN, "%3.2f",
+			 current_summary_bus);
+		row++;
+		current_summary_cumulative += current_summary_bus;
+
 		bus = bus->next;
 		autoadjust_table_generic_fprint(stdout, table, row, 6,
 						TABLE_HAS_SUBTITLE |
 						TABLE_HAS_TITLE);
 	}
+	autoadjust_table_init(table);
+	row = 0;
+	snprintf(table[row][0], TABLE_MAX_ELT_LEN, "Cumulative Current:");
+	snprintf(table[row][1], TABLE_MAX_ELT_LEN,
+		 "%3.2f mW", current_summary_cumulative);
+	row++;
+	autoadjust_table_generic_fprint(stdout, table, row, 2, 0);
+
 	fprintf(stdout, DELIMITER);
 	return;
 }
