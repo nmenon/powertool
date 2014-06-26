@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 	int sampling_duration_ms = 200;
 	int num_samples = 100;
 	char algo[30] = "average";
-	char config_file[30];
+	char config_file[255];
 	char *voltage_rails_to_measure[20];
 	char *groups_to_measure[10];
 	bool display = false;
