@@ -241,6 +241,25 @@ Jokes apart, the logic is pretty similar to device tree, but not exactly the
 same though - no ';' seperator, no phandles... but should be rather
 self evident when you look at existing examples.
 
+Using mpsse, build with I2C=mpsse and use a configuration like the following:
+	busName = {
+		/*
+		 * When using a FT2232H Mini Module over MPSSE interface
+		 * Format: vendorID:productID:interface:serialNumber
+		 * use lsusb -v to see the details
+		 */
+		i2c = "0x0403:0x6010:2:FTVFS9V0"
+
+		rail_name = {
+			/* This represents 1 INA meauring a specific voltage rail */
+			group	= "measurement group"
+			address	= "INA's i2c address in hex"
+			input	= "What is the input to the shunt (the + side of INA measurement)"
+			output	= "What is the output of the shunt (the - side of INA measurement)"
+			shunt_value	= "What is the shunt resistor value used in Ohms"
+			shunt_accuracy	= "How accurate is the resistor in %"
+		}
+	}
 How to contribute / I have this nice idea to improve and share?
 -----------------
 
