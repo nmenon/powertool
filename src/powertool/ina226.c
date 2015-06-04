@@ -199,18 +199,25 @@ int ina226_sample_one(struct ina226_rail *rail)
 	return r;
 }
 
+static s16 convert_to_decimal(u16 x)
+{
+	u16 m = x >> 16;
+	return (~m & x) | (((x & 0x8000) - x) & m);
+}
+
 int ina226_process_one(struct ina226_rail *rail, struct power_data_sample *data)
 {
 	struct reg_ina226 *reg = &rail->reg;
 
 	data->shunt_uV =
-	    ((float)(reg->shunt & REG_SHUNT_MASK)) * REG_SHUNT_UV_PER_LSB;
+	    ((float)convert_to_decimal(reg->shunt & REG_SHUNT_MASK)) *
+	    REG_SHUNT_UV_PER_LSB;
 
 	data->rail_uV = ((float)(reg->bus & REG_BUS_MASK)) * REG_BUS_UV_PER_LSB;
 
 	data->current_mA =
-	    ((float)(reg->current & REG_CURRENT_MASK)) * rail->current_lsb_mA *
-	    1000;
+	    ((float)convert_to_decimal(reg->current & REG_CURRENT_MASK)) *
+	    rail->current_lsb_mA * 1000;
 
 	data->power_mW =
 	    ((float)(reg->power & REG_POWER_MASK)) * rail->power_lsb * 1000;
