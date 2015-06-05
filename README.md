@@ -260,6 +260,9 @@ Using mpsse, build with I2C=mpsse and use a configuration like the following:
 			shunt_accuracy	= "How accurate is the resistor in %"
 		}
 	}
+
+See configs/example\_ftdi.conf for detailed example
+
 How to contribute / I have this nice idea to improve and share?
 -----------------
 
