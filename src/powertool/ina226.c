@@ -130,8 +130,8 @@ int ina226_init(struct ina226_rail *rail)
 					      CONFIG_MODE_V_SHUNT_VOLT);
 
 	reg->config = SAFE_SET(rail->num_avgs, REG_CONFIG_AVG_MASK);
-	reg->config |= SAFE_SET(rail->shunt_conv_time, REG_SHUNT_MASK);
-	reg->config |= SAFE_SET(rail->bus_conv_time, REG_BUS_MASK);
+	reg->config |= SAFE_SET(rail->shunt_conv_time, REG_CONFIG_VSH_CT_MASK);
+	reg->config |= SAFE_SET(rail->bus_conv_time, REG_CONFIG_VBUS_CT_MASK);
 	reg->config |= SAFE_SET(rail->op_mode, REG_CONFIG_MODE_MASK);
 
 	/*
