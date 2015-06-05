@@ -36,6 +36,7 @@ enum powertool_args {
 	PWR_NUM_SAMPLES,
 	PWR_RAIL,
 	PWR_GROUP,
+	PWR_EVERYTHING,
 	PWR_ALGO,
 };
 
@@ -47,11 +48,12 @@ static const struct option long_options[] = {
 	{"num_samples", required_argument, NULL, PWR_NUM_SAMPLES},
 	{"rail_capture", required_argument, NULL, PWR_RAIL},
 	{"group_capture", required_argument, NULL, PWR_GROUP},
+	{"everything_capture", no_argument, NULL, PWR_EVERYTHING},
 	{"algo", required_argument, NULL, PWR_ALGO},
 	{NULL,},
 };
 
-#define OPTION_STRING	"dvc:s:n:r:g:a:"
+#define OPTION_STRING	"devc:s:n:r:g:a:"
 
 static int usage(char *app_name)
 {
@@ -64,6 +66,7 @@ static int usage(char *app_name)
 		"\t[-n | --num_samples | --n] num_samples : Number of Samples to capture (default 100)\n"
 		"\t[-r | --rail_capture | --r] rail_name : Adds to Rail to capture(max 20)\n"
 		"\t[-g | --group_capture | --g] group_name : Adds all rail in the group to capture(max 10)\n"
+		"\t[-e | --everything_capture | --e] : Capture All the rails\n"
 		"\t[-a | --algo | --a] algo_name : data processing algo to use\n");
 	print_algo_list();
 	fprintf(stderr, "\nExample:\n"
@@ -96,6 +99,7 @@ int main(int argc, char *argv[])
 	char *voltage_rails_to_measure[20];
 	char *groups_to_measure[10];
 	bool display = false;
+	bool capture_everything = false;
 	int ret;
 
 	int max_voltage_rails_measure = ARRAY_SIZE(voltage_rails_to_measure);
@@ -153,6 +157,10 @@ int main(int argc, char *argv[])
 			groups_to_measure[idx_group] = optarg;
 			idx_group++;
 			break;
+		case 'e':
+		case PWR_EVERYTHING:
+			capture_everything = true;
+			break;
 
 		case 'a':
 		case PWR_ALGO:
@@ -171,9 +179,9 @@ int main(int argc, char *argv[])
 	}
 
 	if (!display) {
-		if (!idx_v_rail && !idx_group) {
+		if (!capture_everything && !idx_v_rail && !idx_group) {
 			fprintf(stderr,
-				"Error: Need group of rails to measure\n");
+				"Error: Need group OR rails to measure\n");
 			return usage(argv[0]);
 		}
 
@@ -198,7 +206,9 @@ int main(int argc, char *argv[])
 
 	if (display) {
 		parse_print_rails();
-	} else {
+		goto out;
+	}
+	if (!capture_everything) {
 		/* First check if arguments are correct */
 		ret = parse_validate(voltage_rails_to_measure, idx_v_rail,
 				     groups_to_measure, idx_group);
@@ -212,18 +222,18 @@ int main(int argc, char *argv[])
 		/* Get rid of un-needed rails */
 		parse_cleanup(voltage_rails_to_measure, idx_v_rail,
 			      groups_to_measure, idx_group);
-
-		fprintf(stderr, "Voltage Rails selected for Capture:\n");
-		parse_print_rails();
-
-		ret = capture_data(num_samples, sampling_duration_ms);
-		if (ret) {
-			fprintf(stderr, "Data Capture Failed!\n");
-			goto out;
-		}
-
-		algo_process_data(algo, num_samples, sampling_duration_ms);
 	}
+
+	fprintf(stderr, "Voltage Rails selected for Capture:\n");
+	parse_print_rails();
+
+	ret = capture_data(num_samples, sampling_duration_ms);
+	if (ret) {
+		fprintf(stderr, "Data Capture Failed!\n");
+		goto out;
+	}
+
+	algo_process_data(algo, num_samples, sampling_duration_ms);
 
 out:
 	/* Cleanup everything remaining */
