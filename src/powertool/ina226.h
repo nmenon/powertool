@@ -70,7 +70,7 @@ struct ina226_rail {
 	char	board_group_name[INA226_MAX_STRING];
 
 	/* internal */
-	float	current_lsb_mA; /* configurability only if > 16.380A */
+	float	current_lsb_A;
 	float	power_lsb;
 	u8	op_mode;
 	u16	die_id; /* unique identifier per INA chip */

@@ -100,7 +100,7 @@ static unsigned int config_mode_average_numer[] = {
  * is 16.380 A - Do we really need to go beyond that?? Cough!
  * # .5 mA per LSB (configurable?)
  */
-#define REG_CAL_CURRENT_STD_LSB_mA  ((float)0.0005)
+#define REG_MAX_EXP_CURRENT ((float)16.380)
 
 #define REG_CAL_VAL_CONST ((float)0.00512)
 

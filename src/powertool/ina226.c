@@ -106,6 +106,7 @@ int ina226_init(struct ina226_rail *rail)
 	struct reg_ina226 *reg = &rail->reg;
 	int r;
 	float cal_val;
+	float max_current_A;
 
 	/* ONLY DO reset here - no other reg access please */
 	r = _ina226_write(rail->i2c_fd, REG_CONFIG, data);
@@ -123,9 +124,12 @@ int ina226_init(struct ina226_rail *rail)
 	}
 
 	/* All heavy computation stuff here please */
-	rail->current_lsb_mA = REG_CAL_CURRENT_STD_LSB_mA;
+	max_current_A = REG_MAX_EXP_CURRENT;
+	/* current_lsb = Maximum Expected Current / 2 pow 15 */
+	rail->current_lsb_A = max_current_A / (float) 32768;
 
-	rail->power_lsb = rail->current_lsb_mA * REG_POWER_LSB_RATIO;
+
+	rail->power_lsb = rail->current_lsb_A * REG_POWER_LSB_RATIO;
 	rail->op_mode = CONFIG_MODE_CONTINOUS(CONFIG_MODE_V_BUS_VOLT |
 					      CONFIG_MODE_V_SHUNT_VOLT);
 
@@ -142,16 +146,12 @@ int ina226_init(struct ina226_rail *rail)
 	 * self.current_lsb * self.shunt_r
 	 */
 	cal_val = REG_CAL_VAL_CONST;
-	cal_val /= rail->current_lsb_mA * (rail->shunt_resistor_value /
-					   (float)1000);
-	/*
-	 * ???? should add a out of range check? truncation seems to work?
-	 * Original python code was truncation logic
-	 *      if (cal_val > (float)REG_CAL_MASK)
-	 *              reg->cal = REG_CAL_MASK;
-	 *      else
-	 */
-	reg->cal = (u16) cal_val;
+	cal_val /= rail->current_lsb_A * rail->shunt_resistor_value;
+
+	if (cal_val > (float)REG_CAL_MASK)
+		reg->cal = REG_CAL_MASK;
+	else
+		reg->cal = ((u16) cal_val) & REG_CAL_MASK;
 
 	return 0;
 }
@@ -217,7 +217,7 @@ int ina226_process_one(struct ina226_rail *rail, struct power_data_sample *data)
 
 	data->current_mA =
 	    ((float)convert_to_decimal(reg->current & REG_CURRENT_MASK)) *
-	    rail->current_lsb_mA * 1000;
+	    rail->current_lsb_A * 1000;
 
 	data->power_mW =
 	    ((float)(reg->power & REG_POWER_MASK)) * rail->power_lsb * 1000;
