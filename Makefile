@@ -59,7 +59,7 @@ endif
 CROSS_LFLAGS += -lm
 ifneq ($(ARCH),sandbox)
   ifneq ($(I2C),mpsse)
-    CROSS_LFLAGS += --gc-sections --static
+    CROSS_LFLAGS += -Wl,--gc-sections --static
   endif
 endif
 
