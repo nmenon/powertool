@@ -31,3 +31,36 @@ Connection Recommendations:
 - In general, connect beagle i2c1 to PM1_i2c and so on.
 
 For each of the supported boards, please see config file for pinout details.
+
+Measurement board: FT2232H Mini Module
+======================================
+
+                  CN3
+           +-------+------+
+         1 |       |      |  2
+  VBUS     |       |      |      DGND
+    +----- +--------------+
+    +--- 3 |       |      |  4
+  V5v      |       |      |      DGND
+           +--------------+
+           |       |      |
+           |       |      |
+           |       |      |
+           |       |      |
+           |       |      |
+           |       |      |
+           +--------------+
+        19 |       |      | 20
+           +--------------+
+        21 |       |      | 22
+           +--------------+
+        23 |       |      | 24	I2C2_SDA
+           +--------------+
+        25 |       |      | 26	I2C2_SCL
+           +--------------+
+
+NOTE:
+ - for details as in lsusb -v
+ - idVendor 0x0403, idProduct 0x6010, iSerial FTVFS9V0
+ The above example for I2C2 indicates interface 2, so we use:
+ i2c = "0x0403:0x6010:2:FTVFS9V0"
