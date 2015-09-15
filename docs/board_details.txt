@@ -33,59 +33,6 @@ Connection Recommendations:
 Target Board:
 =============
 
-1. DRA72X-EVM:
---------------
-
-Ref Doc: 517500b_j6eco_27mar2014[1].pdf
-
-Key pinout:
-    J1001
-   +------+
-   | PM1  |
- 1 | SCL  |
-   +------+
-   | PM1  |
- 2 | SDA  |
-   +------+
-   | GND  |
- 3 |      |
-   +------+
-   | PM2  |
- 4 | SDA  |
-   +------+
-   | PM2  |
- 5 | SCL  |
-   +------+
-
-
-PM1:
-	INA226AI
-		Binary	Hex	input		output		resistor value(ohm)	accuracy (%)	Group?
-		10-0000	0x40	SYS_3V3		SMPS1_IN	0.005
-		10-0001	0x41	VSYS_3V3	SMPS2_IN	0.005
-		10-0010	0x42	VSYS_3V3	SMPS3_IN	0.005
-		10-0011	0x43	VSYS_3V3	SPMS4_IN	0.005
-		10-0100	0x44	VSYS_3V3	SPMS5_IN	0.005
-		10-0101	0x45	SMPS1		J6_VDD_MPU	0.001
-		10-0110	0x46	SMPS3		J6_VDD_GPU	0.001
-		10-0111	0x47	SPMS2		J6_VDD_CORE	0.002
-		10-1000	0x48	SMPS4		J6_VDD_1V8	0.005
-		10-1001	0x49	SMPS4		EVM_VDD_1V8	0.010
-		10-1010	0x4A	SPMS5		J6_VDD_DDR	0.005
-		10-1011	0x4B	SPMS5		EVM_VDD_DDR	0.005
-
-PM2:
-	INA226AI
-		10-0000	0x40	LDO1_OUT	J6_VDDSHV8	0.010
-		10-0001	0x41	SW_VSYS_3V3	J6_VDDSHV5	0.005
-		10-0010	0x42	LDO3_OUT	J6_VDDA_PHY	0.010
-		10-0011	0x43	LDO4_OUT	J6_VDDA_USB3V3	0.010
-		10-0100	0x44	LDO5_OUT	J6_VDDA_PLL	0.010
-		10-0101	0x45	VSYS_5V0	EVM_5V0		0.001
-		10-0110	0x46	SW_VSYS_3V3	EVM_3V3		0.001
-		10-0111 0x47	VSYS_3V3	VCCA_IN		0.010
-		10-1000	0x48	VSYS_12V0	EVM_12V		0.002
-
 2. DRA74x-EVM:
 -------------
 
