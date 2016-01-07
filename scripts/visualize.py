@@ -46,7 +46,7 @@ from matplotlib import colors
 class Rail:
     name="unknown"
     shunt_uVs = []
-    rail_uVs = []
+    rail_mVs = []
     current_mAs = []
     power_mWs = []
     time_stamps = []
@@ -56,7 +56,7 @@ class Rail:
     def __init__(self, name):
         self.name=name
         self.shunt_uVs = np.array([])
-        self.rail_uVs = np.array([])
+        self.rail_mVs = np.array([])
         self.current_mAs = np.array([])
         self.power_mWs = np.array([])
         self.time_stamps = np.array([])
@@ -64,7 +64,7 @@ class Rail:
     def add_data(self, ts, shunt_uV, rail_uV, current_mA, power_mW):
         self.time_stamps = np.append(self.time_stamps, float(ts))
         self.shunt_uVs = np.append(self.shunt_uVs, float(shunt_uV))
-        self.rail_uVs = np.append(self.rail_uVs, float(rail_uV))
+        self.rail_mVs = np.append(self.rail_mVs, float(rail_uV) / 1000)
         self.current_mAs = np.append(self.current_mAs, float(current_mA))
         self.power_mWs = np.append(self.power_mWs, float(power_mW))
 
@@ -83,7 +83,7 @@ class Panel:
         self.fig = plt.figure()
         self.fig.canvas.set_window_title(name)
 
-        self.fig.subplots_adjust(left=0.04, bottom=0.09, right=1, top=0.95)
+        self.fig.subplots_adjust(left=0.09, bottom=0.09, right=1, top=0.95)
         self.ax = self.fig.add_subplot(111)
         self.ax.set_ylabel(display_desc)
 
@@ -98,7 +98,7 @@ class Panel:
         if panel.dtype == "shuntv":
             show_list = rail.shunt_uVs
         if panel.dtype == "railv":
-            show_list = rail.rail_uVs
+            show_list = rail.rail_mVs
         if panel.dtype == "current":
             show_list = rail.current_mAs
         rail.plot.set_data(rail.time_stamps, show_list)
@@ -119,7 +119,7 @@ class Panel:
         if self.dtype == "shuntv":
             show_list = rail.shunt_uVs
         if self.dtype == "railv":
-            show_list = rail.rail_uVs
+            show_list = rail.rail_mVs
         if self.dtype == "current":
             show_list = rail.current_mAs
 
@@ -280,7 +280,7 @@ def main(argv):
             desc="Shunt Voltage(uV)"
         elif opt in ( "-r" , "--rail_voltage" ):
             t = "railv"
-            desc="Rail Voltage(uV)"
+            desc="Rail Voltage(mV)"
         elif opt in ( "-c" , "--current" ):
             t = "current"
             desc="Current Consumption(mA)"
