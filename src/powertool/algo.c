@@ -33,15 +33,60 @@ void print_algo_list(void)
 	fprintf(stderr,
 		"\nalgo_name options:\n"
 		"\tdump: just dumps the data in csv format to stdout\n"
-		"\taverage: samples are averaged and final average results"
-		"are shown\n");
+		"\taverage: samples are averaged and final average results "
+		"are shown\n"
+		"\tstream: samples dumped as and when detected\n"
+	       );
 }
 
 int algo_check(char *algo)
 {
-	if (!strcmp(algo, "dump") || !strcmp(algo, "average"))
+	if (!strcmp(algo, "dump") || !strcmp(algo, "average") ||
+	    !strcmp(algo, "stream"))
 		return 0;
 	return 1;
+}
+
+void algo_stream_data_start(struct pm_bus *bus)
+{
+	struct ina226_rail *rail;
+	fprintf(stdout, DELIMITER "Rail Listing\n" DELIMITER);
+	while (bus) {
+		rail = bus->rail;
+		while (rail) {
+			fprintf(stdout, "%s,%s,%s,%s,%f %f|",
+				rail->name,
+				rail->in_board_name,
+				rail->out_board_name,
+				rail->board_group_name,
+				rail->shunt_resistor_value,
+				rail->shunt_resistor_accuracy);
+			rail = rail->next;
+		}
+		bus = bus->next;
+	}
+	fprintf(stdout, "\n" DELIMITER "Data Dump Start\n" DELIMITER);
+}
+void algo_stream_data(struct pm_bus *bus, int idx)
+{
+	struct ina226_rail *rail;
+
+	while (bus) {
+		rail = bus->rail;
+		while (rail) {
+			struct power_data_sample *data = &rail->data[idx];
+
+			fprintf(stdout, "%f, %f, %f, %f|",
+					data->shunt_uV,
+					data->rail_uV,
+					data->current_mA, data->power_mW);
+			rail = rail->next;
+		}
+		bus = bus->next;
+	}
+	fprintf(stdout, "\n");
+
+	return;
 }
 
 static void algo_dump_data(struct pm_bus *bus, int num, int dur_ms)
@@ -182,4 +227,5 @@ void algo_process_data(char *algo, int num_samples, int sampling_duration_ms)
 		algo_dump_data(bus, num_samples, sampling_duration_ms);
 	if (!strcmp(algo, "average"))
 		algo_average_data(bus, num_samples, sampling_duration_ms);
+	/* Nothing to do in streaming mode */
 }

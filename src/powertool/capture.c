@@ -25,6 +25,7 @@
 #include "ina226.h"
 #include "pm_bus.h"
 #include "capture.h"
+#include "algo.h"
 
 static inline int _init_allbuses(struct pm_bus *bus)
 {
@@ -185,7 +186,7 @@ out:
 	return ret;
 }
 
-int capture_data(int num, int dur_ms)
+int capture_data(int num, int dur_ms, char stream_data)
 {
 	struct pm_bus *bus = root_pm_bus;
 	int ret;
@@ -210,6 +211,8 @@ int capture_data(int num, int dur_ms)
 		"Capturing data from rails: Approximately %f Seconds..\n",
 		seconds);
 
+	if (stream_data)
+		algo_stream_data_start(bus);
 	gettimeofday(&before, NULL);
 
 	for (i = 0; i < num; i++) {
@@ -220,6 +223,8 @@ int capture_data(int num, int dur_ms)
 		ret = _process_data_allbuses(bus, i);
 		if (ret)
 			break;
+		if (stream_data)
+			algo_stream_data(bus, i);
 		msleep(dur_ms);
 	}
 

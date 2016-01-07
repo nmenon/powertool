@@ -16,6 +16,6 @@
 #ifndef __CAPTURE_H_
 #define __CAPTURE_H_
 
-int capture_data(int num, int dur_ms);
+int capture_data(int num, int dur_ms, char stream_data);
 
 #endif	/* __CAPTURE_H_ */

@@ -227,7 +227,8 @@ int main(int argc, char *argv[])
 	fprintf(stderr, "Voltage Rails selected for Capture:\n");
 	parse_print_rails();
 
-	ret = capture_data(num_samples, sampling_duration_ms);
+	ret = capture_data(num_samples, sampling_duration_ms,
+			   !strcmp(algo, "stream"));
 	if (ret) {
 		fprintf(stderr, "Data Capture Failed!\n");
 		goto out;
