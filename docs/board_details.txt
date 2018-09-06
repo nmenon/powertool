@@ -1,66 +1,83 @@
-Measurement Board: BeagleBone Black (Rev C)
-==========================================
-                  P9
-           +-------+------+
-         1 |       |      |  2
-  DGND     |       |      |      DGND
-           +--------------+
-           |       |      |
-           |       |      |
-           |       |      |
-           |       |      |
-           |       |      |
-           |       |      |
-           |       |      |
-           |       |      |
-           +--------------+
-I2C1_SCL 17|       |      | 18 I2C1_SDA
-           +--------------+
-I2C2_SCL 19|       |      | 20 I2C2_SDA
-           +--------------+
-           |       |      |
-           |       |      |
-           |       |      |
-
-         BeagleBone Black
-
-Connection Recommendations:
+Notes:
 ===============
-- Custom board would probably be the best, but in case of wiring, please
-  try to use as short a cable as possible
-- In general, connect beagle i2c1 to PM1_i2c and so on.
+- Please try to use shorter cables since i2c is not meant for long distance
+- On BeagleBone only i2c2 is enabled by default. Edit the configs to i2c = "2"
+- For each of the supported boards, please see config file for pinout details.
 
-For each of the supported boards, please see config file for pinout details.
+Measurement Method: BeagleBone Black (Rev C)
+==========================================
+               P9 Header
+            +------+------+
+    DGND  1 |      |      |  2  DGND
+            +------+------+
+            |      |      |
+            |      |      |
+            |      |      |
+            +------+------+
+         15 |      |      | 16
+            +------+------+
+I2C1_SCL 17 |      |      | 18  I2C1_SDA
+            +------+------+
+I2C2_SCL 19 |      |      | 20  I2C2_SDA
+            +------+------+
+         21 |      |      | 22
+            +------+------+
+            |      |      |
+            |      |      |
+            |      |      |
 
-Measurement board: FT2232H Mini Module
+            BeagleBone Black
+
+Measurement Method: FT2232H Mini Module
 ======================================
+ - this wiring works with any FT2232H - 2 Channel USB to Serial IC w/ MPSSE
+ - use 'lsusb -v' to capture device details (sudo may be needed for iSerial)
+ - example: idVendor 0x0403, idProduct 0x6010, iSerial FTVFS9V0
+ - CN2 Header ADBUS[7:0] pins are Channel 1
+ - CN3 Header BDBUS[7:0] pins are Channel 2
+ - in the example config using channel 2: i2c = "0x0403:0x6010:2:FTVFS9V0"
+ - 2 pins are needed for bidirectional data: TDI in / TDO out
 
-                  CN3
-           +-------+------+
-         1 |       |      |  2
-  VBUS     |       |      |      DGND
-    +----- +--------------+
-    +--- 3 |       |      |  4
-  V5v      |       |      |      DGND
-           +--------------+
-           |       |      |
-           |       |      |
-           |       |      |
-           |       |      |
-           |       |      |
-           |       |      |
-           +--------------+
-        19 |       |      | 20
-           +--------------+
-        21 |       |      | 22
-           +--------------+
-        23 |       |      | 24	I2C2_SDA
-           +--------------+
-        25 |       |      | 26	I2C2_SCL
-           +--------------+
+                CN2 Header                           CN3 Header
+             +------+------+                      +------+------+
+           1 | VCC3 | DGND |  2 DGND            1 | VUSB | DGND |  2
+             +------+------+                      +------+------+
+           3 | VCC3 | DGND |  4 DGND            3 | VUSB | DGND |  4
+             +------+------+                      +------+------+
+           5 | VCC3 |      |  6 DGND           .. |      |      | ..
+             +------+------+                      +------+------+
+SCL (TCK)  7 |  AD0 | RST  |  8                .. |      |      | ..
+             +------+------+                      +------+------+
+SDA (TDO)  9 |  AD2 | AD1  | 10 SDA (TDI)      .. |      |      | ..
+             +------+------+                      +------+------+
+          11 |  VIO | AD3  | 12                19 |  BD6 | BD5  | 20
+             +------+------+                      +------+------+
+          13 |  AD5 | AD4  | 14                21 |  BD4 | VIO  | 22
+             +------+------+                      +------+------+
+          15 |  AD7 | AD6  | 16                23 |  BD3 | BD2  | 24 SDA (TDO)
+             +------+------+                      +------+------+
+          .. |      |      | ..      SDA (TDI) 25 |  BD1 | BD0  | 26 SCL (TCK)
+             +------+------+                      +------+------+
 
-NOTE:
- - for details as in lsusb -v
- - idVendor 0x0403, idProduct 0x6010, iSerial FTVFS9V0
- The above example for I2C2 indicates interface 2, so we use:
- i2c = "0x0403:0x6010:2:FTVFS9V0"
+Measurement Method: C232HM-DDHSL-0 Cable
+======================================
+ - this wiring works with any FT232H - 1 Channel USB to Serial IC w/ MPSSE
+ - use 'lsusb -v' to capture device details (sudo may be needed for iSerial)
+ - example: idVendor 0x0403, idProduct 0x6014, iSerial FT0J4HIE
+ - in the example config: i2c = "0x0403:0x6014:1:FT0J4HIE"
+ - 2 pins are needed for bidirectional data: TDI in / TDO out
+
+           MPSSE Cable Details
+             +-----+--------+
+           1 | VCC | RED    |
+             +-----+--------+
+           2 | TCK | ORANGE |   -----------> SCL
+             +-----+--------+
+           3 | TDI | YELLOW |   --+
+             +-----+--------+     |--------> SDA
+           4 | TDO | GREEN  |   --+
+             +-----+--------+
+          .. |     |        |
+             +-----+--------+
+          10 | GND | BLACK  |   -----------> DGND
+             +-----+--------+
