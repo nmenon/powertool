@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # (C) Copyright 2016
 # Texas Instruments, <www.ti.com>
 # Nishanth Menon <nm@ti.com>
@@ -255,7 +255,7 @@ def Collect_dump_data(p):
         p.update_plot(next_rail, p)
 
 def usage():
-    print __doc__
+    print (__doc__)
 
 def main(argv):
     try:
